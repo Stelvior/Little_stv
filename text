@@ -1,0 +1,66 @@
+//GERAR FOTO ALEOTORIA
+function gerarFotoAleatoria(){
+    const seed = Math.floor(Math.random() * 10000);
+    return
+    `https://api.dicebear.com/6.x/initials/svg?seed=${seed}`
+}
+
+//mostrar comentario
+function mostrarComentario(nome, texto, foto){
+    const post = document.createElement('div');
+    post.classList.add('post');
+    post.innerHTML = `<div class="topo">
+                        <img src="${foto}" alt="Foto de perfil"/>
+                        <div><strong>${nome}</strong></div>
+                      </div>
+                      <p>${texto}</p>`
+
+    postContainer.appendChild(post);
+}
+
+//carregar os comentarios salvo
+function carregarComentarios(){
+    postContainer.innerHTML = "";
+    const comentarios = JSON.parse(localStorage.getItem('comentarios')) || [];
+
+    comentarios.forEach(c => {
+        mostrarComentario(c.nome, c.texto, c.foto);
+    });
+}
+
+//Salvar novo comentario
+function salvarComentario(nome, texto){
+    const comentarios = JSON.parse(localStorage.getItem('comentarios')) || [];
+    const foto = gerarFotoAleatoria();
+
+    const novoComentario = {
+        nome: nome,
+        texto: texto,
+        foto: foto
+    };
+
+    comentarios.push(novoComentario);
+
+    localStorage.setItem('comentarios', JSON.stringify(comentarios));
+    carregarComentarios();
+};
+
+
+
+
+
+btnPost.addEventListener("click", () => {
+    const nome = userName.valeu.trim();
+    const texto = textArea.value.trim(); 
+
+    if(nome === "" || texto === ""){
+        alert("Preencha o nome e o comentario");
+        return;
+    }
+
+    salvarComentario(nome, texto);
+    userName.value = "";
+    textArea.value = "";
+})
+
+carregarComentarios()
